@@ -10,27 +10,27 @@ GOL::GOL(int gridSize, int blockSize, int weight)
 
 vector<vector<int>> GOL::getNewGrid(bool populated)
 {
-	vector<vector<int>> blankGrid;
+	vector<vector<int>> newGrid;
 
-	for (int i = 0; i < this->side; i++)
+	for (int i = 0; i < side; i++)
 	{
 		vector<int> row;
 
-		for (int j = 0; j < this->side; j++)
+		for (int j = 0; j < side; j++)
 		{
-			if (populated)	row.push_back(this->getOneZero());
+			if (populated)	row.push_back(getOneZero());
 			else row.push_back(0);
 		}
 
-		blankGrid.push_back(row);
+		newGrid.push_back(row);
 	}
 
-	return blankGrid;
+	return newGrid;
 }
 
 int GOL::getOneZero()
 {
-	if ((rand() % 100) + 1 <= this->weight) return 1;
+	if ((rand() % 100) + 1 <= weight) return 1;
 	else return 0;
 }
 
@@ -40,14 +40,14 @@ void GOL::run()
 
 	int groupSum = 0;
 
-	vector<vector<int>> grid = this->getNewGrid(true);
+	vector<vector<int>> grid = getNewGrid(true);
 	vector<vector<int>> bbGrid;
 
-	RenderWindow window(VideoMode(this->gridSize, this->gridSize), "Game of Life", Style::Close);
+	RenderWindow window(VideoMode(gridSize, gridSize), "Game of Life", Style::Close);
 	window.setFramerateLimit(30);
 
 	RectangleShape square;
-	square.setSize(sf::Vector2f(this->blockSize, this->blockSize));
+	square.setSize(Vector2f(blockSize, blockSize));
 
 	while (window.isOpen())
 	{
@@ -60,13 +60,13 @@ void GOL::run()
 		window.clear();
 
 		// Print grid to window as blocks
-		for (int x = 0; x < this->side; x++)
+		for (int x = 0; x < side; x++)
 		{
-			for (int y = 0; y < this->side; y++)
+			for (int y = 0; y < side; y++)
 			{
 				if (grid[x][y] == 1)
 				{
-					square.setPosition(Vector2f(x * this->blockSize, y * this->blockSize));
+					square.setPosition(Vector2f(x * blockSize, y * blockSize));
 					window.draw(square);
 				}
 			}
@@ -75,21 +75,21 @@ void GOL::run()
 		window.display();
 
 		bbGrid = grid;
-		grid = this->getNewGrid(false);
+		grid = getNewGrid(false);
 
 		// GOL logic
-		for (int x = 0; x < this->side; x++)
+		for (int x = 0; x < side; x++)
 		{
-			for (int y = 0; y < this->side; y++)
+			for (int y = 0; y < side; y++)
 			{
-				if (y + 1 < this->side) groupSum += bbGrid[x][y + 1];
-				if (x + 1 < this->side && y + 1 < this->side) groupSum += bbGrid[x + 1][y + 1];
-				if (x + 1 < this->side) groupSum += bbGrid[x + 1][y];
-				if (x + 1 < this->side && y > 0) groupSum += bbGrid[x + 1][y - 1];
+				if (y + 1 < side) groupSum += bbGrid[x][y + 1];
+				if (x + 1 < side && y + 1 < side) groupSum += bbGrid[x + 1][y + 1];
+				if (x + 1 < side) groupSum += bbGrid[x + 1][y];
+				if (x + 1 < side && y > 0) groupSum += bbGrid[x + 1][y - 1];
 				if (y > 0) groupSum += bbGrid[x][y - 1];
 				if (x > 0 && y > 0) groupSum += bbGrid[x - 1][y - 1];
 				if (x > 0) groupSum += bbGrid[x - 1][y];
-				if (x > 0 && y + 1 < this->side) groupSum += bbGrid[x - 1][y + 1];
+				if (x > 0 && y + 1 < side) groupSum += bbGrid[x - 1][y + 1];
 
 				if (bbGrid[x][y] == 1 && (groupSum == 2 || groupSum == 3)) grid[x][y] = 1;
 				else if (bbGrid[x][y] == 0 && groupSum == 3) grid[x][y] = 1;
